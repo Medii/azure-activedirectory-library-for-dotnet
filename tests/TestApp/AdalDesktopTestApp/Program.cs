@@ -61,7 +61,7 @@ namespace AdalDesktopTestApp
         {
             Telemetry telemetry = Telemetry.GetInstance();
             DispatcherImplement dispatcher = new DispatcherImplement();
-            telemetry.RegisterDispatcher(dispatcher, true);
+            telemetry.RegisterDispatcher(dispatcher, false);
 
             //LoggerCallbackHandler.Callback = new MyCallback();
 
@@ -84,7 +84,7 @@ namespace AdalDesktopTestApp
     {
         private readonly List<List<Tuple<string, string>>> storeList = new List<List<Tuple<string, string>>>();
 
-        void IDispatcher.Dispatch(List<Tuple<string, string>> Event)
+        void IDispatcher.DispatchEvent(List<Tuple<string, string>> Event)
         {
             storeList.Add(Event);
         }

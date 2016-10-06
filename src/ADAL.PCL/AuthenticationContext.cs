@@ -225,19 +225,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             }
             finally 
             {
-                ApiEvent apiEvent = null;
-                if (result != null)
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, "611");
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
-                }
-                else
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, null, null, "611");
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
-                }
-                apiEvent.CorrelationId = requestData.CorrelationId;
-                Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
+                ApiEventHelper(result, requestData, "611");
             }
             return result;
         }
@@ -263,8 +251,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         public async Task<AuthenticationResult> AcquireTokenAsync(string resource, ClientCredential clientCredential)
         {
             return await
-                        this.AcquireTokenForClientCommonAsync(resource, new ClientKey(clientCredential), "706")
-                            .ConfigureAwait(false);
+                AcquireTokenForClientCommonAsync(resource, new ClientKey(clientCredential), "706")
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -276,7 +264,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         public async Task<AuthenticationResult> AcquireTokenAsync(string resource, IClientAssertionCertificate clientCertificate)
         {
             return await this.AcquireTokenForClientCommonAsync(resource, new ClientKey(clientCertificate, 
-                this.Authenticator), "706").ConfigureAwait(false);
+                this.Authenticator), "711").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -316,8 +304,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         /// <returns>It contains Access Token, Refresh Token and the Access Token's expiration time.</returns>
         public async Task<AuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string authorizationCode, Uri redirectUri, ClientCredential clientCredential, string resource)
         {
-            return await this.AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
-                            new ClientKey(clientCredential), resource, "806").ConfigureAwait(false);
+            return await AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
+                new ClientKey(clientCredential), resource, "806").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -330,7 +318,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         /// <returns>It contains Access Token, Refresh Token and the Access Token's expiration time.</returns>
         public async Task<AuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string authorizationCode, Uri redirectUri, ClientAssertion clientAssertion)
         {
-            return await this.AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri, 
+            return await AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
                 new ClientKey(clientAssertion), null, "811").ConfigureAwait(false);
         }
 
@@ -345,8 +333,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         /// <returns>It contains Access Token, Refresh Token and the Access Token's expiration time.</returns>
         public async Task<AuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string authorizationCode, Uri redirectUri, ClientAssertion clientAssertion, string resource)
         {
-            return await this.AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
-                            new ClientKey(clientAssertion), resource, "816").ConfigureAwait(false);
+            return await AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
+                new ClientKey(clientAssertion), resource, "816").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -359,8 +347,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         /// <returns>It contains Access Token, Refresh Token and the Access Token's expiration time.</returns>
         public async Task<AuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string authorizationCode, Uri redirectUri, IClientAssertionCertificate clientCertificate)
         {
-            return await this.AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
-                            new ClientKey(clientCertificate, this.Authenticator), null, "821").ConfigureAwait(false);
+            return await AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
+                new ClientKey(clientCertificate, Authenticator), null, "821").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -374,9 +362,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         /// <returns>It contains Access Token, Refresh Token and the Access Token's expiration time.</returns>
         public async Task<AuthenticationResult> AcquireTokenByAuthorizationCodeAsync(string authorizationCode, Uri redirectUri, IClientAssertionCertificate clientCertificate, string resource)
         {
-            return await this.AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
-                            new ClientKey(clientCertificate, this.Authenticator), resource, "826")
-                            .ConfigureAwait(false);
+            return await AcquireTokenByAuthorizationCodeCommonAsync(authorizationCode, redirectUri,
+                new ClientKey(clientCertificate, Authenticator), resource, "826")
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -388,8 +376,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         /// <returns>It contains Access Token and the Access Token's expiration time.</returns>
         public async Task<AuthenticationResult> AcquireTokenAsync(string resource, ClientCredential clientCredential, UserAssertion userAssertion)
         {
-            return await this.AcquireTokenOnBehalfCommonAsync(resource, new ClientKey(clientCredential), userAssertion,
-                            "500").ConfigureAwait(false);
+            return await AcquireTokenOnBehalfCommonAsync(resource, new ClientKey(clientCredential), userAssertion,
+                "500").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -401,8 +389,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         /// <returns>It contains Access Token and the Access Token's expiration time.</returns>
         public async Task<AuthenticationResult> AcquireTokenAsync(string resource, IClientAssertionCertificate clientCertificate, UserAssertion userAssertion)
         {
-            return await this.AcquireTokenOnBehalfCommonAsync(resource, new ClientKey(clientCertificate, 
-                this.Authenticator), userAssertion, "506").ConfigureAwait(false);
+            return await AcquireTokenOnBehalfCommonAsync(resource, new ClientKey(clientCertificate,
+                Authenticator), userAssertion, "506").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -414,8 +402,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         /// <returns>It contains Access Token and the Access Token's expiration time.</returns>
         public async Task<AuthenticationResult> AcquireTokenAsync(string resource, ClientAssertion clientAssertion, UserAssertion userAssertion)
         {
-            return await this.AcquireTokenOnBehalfCommonAsync(resource, new ClientKey(clientAssertion), userAssertion,
-                            "511").ConfigureAwait(false);
+            return await AcquireTokenOnBehalfCommonAsync(resource, new ClientKey(clientAssertion), userAssertion,
+                "511").ConfigureAwait(false);
         }
 
         /// <summary>
@@ -584,25 +572,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             {
                 result = await handler.RunAsync().ConfigureAwait(false);
             }
-
             finally
             {
-                ApiEvent apiEvent = null;
-
-                if (result != null)
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
-                }
-                else
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, null, null, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
-                }
-
-                apiEvent.SetEvent(EventConstants.CorrelationId, requestData.CorrelationId.ToString());
-                Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
-                Telemetry.GetInstance().Flush(requestData.RequestId);
+                ApiEventHelper(result, requestData, ApiId);
             }
 
             return result;
@@ -630,25 +602,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             {
                 result = await handler.RunAsync().ConfigureAwait(false);
             }
-
             finally
             {
-                ApiEvent apiEvent = null;
-
-                if (result != null)
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
-                }
-                else
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, null, null, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
-                }
-
-                apiEvent.SetEvent(EventConstants.CorrelationId, requestData.CorrelationId.ToString());
-                Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
-                Telemetry.GetInstance().Flush(requestData.RequestId);
+                ApiEventHelper(result, requestData, ApiId);
             }
 
             return result;
@@ -675,25 +631,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             {
                 result = await handler.RunAsync().ConfigureAwait(false);
             }
-
             finally
             {
-                ApiEvent apiEvent = null;
-
-                if (result != null)
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
-                }
-                else
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, null, null, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
-                }
-
-                apiEvent.SetEvent(EventConstants.CorrelationId, requestData.CorrelationId.ToString());
-                Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
-                Telemetry.GetInstance().Flush(requestData.RequestId);
+                ApiEventHelper(result, requestData, ApiId);
             }
 
             return result;
@@ -725,25 +665,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             {
                 result = await handler.RunAsync().ConfigureAwait(false);
             }
-
             finally
             {
-                ApiEvent apiEvent = null;
-
-                if (result != null)
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
-                }
-                else
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, null, null, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
-                }
-
-                apiEvent.SetEvent(EventConstants.CorrelationId, requestData.CorrelationId.ToString());
-                Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
-                Telemetry.GetInstance().Flush(requestData.RequestId);
+                ApiEventHelper(result, requestData, ApiId);
             }
 
             return result;
@@ -769,25 +693,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             {
                 result = await handler.RunAsync().ConfigureAwait(false);
             }
-
             finally
             {
-                ApiEvent apiEvent = null;
-
-                if (result != null)
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
-                }
-                else
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, null, null, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
-                }
-
-                apiEvent.SetEvent(EventConstants.CorrelationId, requestData.CorrelationId.ToString());
-                Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
-                Telemetry.GetInstance().Flush(requestData.RequestId);
+                ApiEventHelper(result, requestData, ApiId);
             }
 
             return result;
@@ -815,25 +723,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             {
                 result = await handler.RunAsync().ConfigureAwait(false);
             }
-
             finally 
             {
-                ApiEvent apiEvent = null;
-
-                if (result != null)
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
-                }
-                else
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, null, null, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
-                }
-
-                apiEvent.SetEvent(EventConstants.CorrelationId, requestData.CorrelationId.ToString());
-                Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
-                Telemetry.GetInstance().Flush(requestData.RequestId);
+                ApiEventHelper(result, requestData, ApiId);
             }
 
             return result;
@@ -860,28 +752,32 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             {
                 result = await handler.RunAsync().ConfigureAwait(false);
             }
-
-            finally 
+            finally
             {
-                ApiEvent apiEvent = null;
-
-                if (result != null)
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
-                }
-                else
-                {
-                    apiEvent = new ApiEvent(this.Authenticator, null, null, ApiId);
-                    apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
-                }
-
-                apiEvent.SetEvent(EventConstants.CorrelationId, requestData.CorrelationId.ToString());
-                Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
-                Telemetry.GetInstance().Flush(requestData.RequestId);
+                ApiEventHelper(result, requestData, ApiId);
             }
 
             return result;
+        }
+
+        private void ApiEventHelper(AuthenticationResult result, RequestData requestData, string ApiId)
+        {
+            ApiEvent apiEvent = null;
+
+            if (result != null)
+            {
+                apiEvent = new ApiEvent(this.Authenticator, result.UserInfo, result.TenantId, ApiId);
+                apiEvent.SetEvent(EventConstants.IsSuccessful, "true");
+            }
+            else
+            {
+                apiEvent = new ApiEvent(this.Authenticator, null, null, ApiId);
+                apiEvent.SetEvent(EventConstants.IsSuccessful, "false");
+            }
+
+            apiEvent.SetEvent(EventConstants.CorrelationId, requestData.CorrelationId.ToString());
+            Telemetry.GetInstance().StopEvent(requestData.RequestId, apiEvent, "api_event");
+            Telemetry.GetInstance().Flush(requestData.RequestId);
         }
     }
 }

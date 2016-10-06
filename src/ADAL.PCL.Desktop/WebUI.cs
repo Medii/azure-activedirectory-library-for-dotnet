@@ -48,15 +48,13 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory.Internal
             Telemetry.GetInstance().StartEvent(requestId, "ui_event");
 
             UIEvent UiEvent = new UIEvent();
-            DateTime UiStartTime = DateTime.Now;
+
             var sendAuthorizeRequest = new Action(
                 delegate
                 {
                     authorizationResult = this.Authenticate(authorizationUri, redirectUri);
                 });
-            DateTime stopTime = DateTime.Now;
-            UiEvent.UiTime = stopTime.Subtract(UiStartTime);
-            UiEvent.SetEvent(EventConstants.UiTime, UiEvent.UiTime);
+
             Telemetry.GetInstance().StopEvent(requestId, UiEvent, "ui_event");
 
             // If the thread is MTA, it cannot create or communicate with WebBrowser which is a COM control.

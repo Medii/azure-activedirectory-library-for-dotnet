@@ -29,14 +29,14 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-
 namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 {
     internal class DefaultDispatcher
     {
-        internal IDictionary<string, List<EventsBase>> ObjectsToBeDispatched = new ConcurrentDictionary<string, List<EventsBase>>();
+        internal IDispatcher Dispatcher;
 
-        internal IDispatcher Dispatcher ;
+        internal IDictionary<string, List<EventsBase>> ObjectsToBeDispatched =
+            new ConcurrentDictionary<string, List<EventsBase>>();
 
         internal DefaultDispatcher(IDispatcher dispatcher)
         {
@@ -45,14 +45,13 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 
         internal virtual void Flush(string requestId)
         {
-               
         }
 
         internal virtual void Receive(string requestId, EventsBase eventsInterface)
         {
             if (Dispatcher != null)
             {
-                Dispatcher.Dispatch(eventsInterface.GetEvents());
+                Dispatcher.DispatchEvent(eventsInterface.GetEvents());
             }
         }
     }

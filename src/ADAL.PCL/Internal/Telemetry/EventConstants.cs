@@ -25,11 +25,6 @@
 //
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 {
@@ -80,7 +75,6 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         public const string HttpStatusCode = "response_code";
         public const string IsDeprecated = "is_deprecated";
         public const string ExtendedExpires = "extended_expires_on_setting";
-        public const string UiTime = "ui_time";
         public const string UserCancel = "user_cancel";
         public const string HttpEventCount = "http_event_count";
     }

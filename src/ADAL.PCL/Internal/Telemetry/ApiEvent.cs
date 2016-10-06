@@ -27,13 +27,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Security;
 
 namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 {
     internal class ApiEvent : DefaultEvent
     {
-        internal ApiEvent(Authenticator authenticator, UserInfo userinfo, string tenantId, string apiId) : base(EventConstants.ApiEvent)
+        internal ApiEvent(Authenticator authenticator, UserInfo userinfo, string tenantId, string apiId)
         {
             Tenant = PlatformPlugin.CryptographyHelper.CreateSha256Hash(tenantId);
             SetEvent(EventConstants.Tenant, Tenant);
@@ -51,23 +50,15 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             }
 
             Authority = authenticator.Authority;
-            SetEvent(EventConstants.Authority,Authority);
+            SetEvent(EventConstants.Authority, Authority);
 
             AuthorityType = authenticator.AuthorityType.ToString();
-            SetEvent(EventConstants.AuthorityType,AuthorityType);
+            SetEvent(EventConstants.AuthorityType, AuthorityType);
 
             IsDeprecated = false;
             SetEvent(EventConstants.IsDeprecated, IsDeprecated.ToString());
 
-            SetEvent(EventConstants.ApiId ,apiId);
-        }
-
-        internal override void SetEvent(string eventName, string eventParameter)
-        {
-            if (eventParameter != null)
-            {
-                DefaultEvents.Add(new Tuple<string, string>(eventName, eventParameter));
-            }
+            SetEvent(EventConstants.ApiId, apiId);
         }
 
         internal string Tenant { get; set; }
@@ -92,10 +83,18 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 
         internal bool ExtendedExpires { get; set; }
 
+        internal override void SetEvent(string eventName, string eventParameter)
+        {
+            if (eventParameter != null)
+            {
+                EventDictitionary.Add(new Tuple<string, string>(eventName, eventParameter));
+            }
+        }
+
         internal override void ProcessEvent(Dictionary<string, string> dispatchMap)
         {
-            List<Tuple<string, string>> listEvent = DefaultEvents;
-            int size = DefaultEvents.Count;
+            List<Tuple<string, string>> listEvent = EventDictitionary;
+            int size = EventDictitionary.Count;
 
             for (int i = 0; i < size; i++)
             {
@@ -122,4 +121,3 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         }
     }
 }
-
